@@ -1,11 +1,13 @@
 import numpy as np
 
-#palavras
-def generateTable(data, k):
+#Caracter
+def generateTable(data,k):
+    
     T = {}
     for i in range(len(data)-k):
-        X = tuple(data[i:i+k])  # usar tupla para sequências de palavras
+        X = data[i:i+k]
         Y = data[i+k]
+        #print("X  %s and Y %s  "%(X,Y))
         
         if T.get(X) is None:
             T[X] = {}
@@ -54,23 +56,26 @@ def MarkovChain(text, k, alpha=1):
  
 model = MarkovChain(text, 6)
 
-#palavra
-def sample_next(ctx, model, k):
-    ctx = tuple(ctx[-k:])
+#Caracter
+def sample_next(ctx,model,k):
+ 
+    ctx = ctx[-k:]
     if model.get(ctx) is None:
         return " "
-    
-    possible_words = list(model[ctx].keys())
+    possible_Chars = list(model[ctx].keys())
     possible_values = list(model[ctx].values())
+    #max_index = np.argmax(possible_values)
     
+    #print(possible_Chars)
+    #print(possible_values)
     total_prob = sum(possible_values)
     if total_prob != 1:
         possible_values = [p / total_prob for p in possible_values]
-
-
-    return np.random.choice(possible_words, p=possible_values)
+ 
+    return np.random.choice(possible_Chars,p=possible_values)
 
 def generateText(starting_sent,k,maxLen=2000):
+    
     sentence = starting_sent
     ctx = starting_sent[-k:]
     
@@ -79,11 +84,10 @@ def generateText(starting_sent,k,maxLen=2000):
         sentence += next_prediction
         ctx = sentence[-k:]
     while sentence[-1] not in [".", "!", "?"]:
-        next_word = sample_next(ctx, model, k)
-        sentence += next_word
+        next_prediction = sample_next(ctx, model, k)
+        sentence += next_prediction
         ctx = sentence[-k:]
-
     return sentence
  
-text = generateText("literatura",k=6,maxLen=500)
+text = generateText("Jane",k=6,maxLen=500)
 print(text)
